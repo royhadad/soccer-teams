@@ -1,10 +1,11 @@
 import React from 'react';
-import './App.css';
+import SoccerTeamsTable from "../SoccerTeamsTable";
 
 function App() {
   return (
     <div>
       Hello world!
+        <SoccerTeamsTable />
     </div>
   );
 }
