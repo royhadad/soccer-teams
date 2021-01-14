@@ -4,6 +4,8 @@ import MaterialTable, {Column} from "material-table";
 import {Box, lighten, makeStyles, Typography, useTheme} from "@material-ui/core";
 import Team from '../../types/Team'
 
+const FAVORITE_TEAM_LOCAL_STORAGE_KEY = 'favoriteTeamId'
+
 const createClasses = makeStyles(() => {
     return {
         crest: {
@@ -12,12 +14,12 @@ const createClasses = makeStyles(() => {
     }
 })
 
-const SoccerTeamsTable = () => {
+const SoccerTeamsTable: React.FC = () => {
     const classes = createClasses();
     const theme = useTheme();
 
     const [soccerTeams, setSoccerTeams] = useState<Team[]>([])
-    const [favoriteTeamId, setFavoriteTeamId] = useState<Team['id']>(localStorage.getItem('favoriteTeamId') || '')
+    const [favoriteTeamId, setFavoriteTeamId] = useState<Team['id']>(localStorage.getItem(FAVORITE_TEAM_LOCAL_STORAGE_KEY) || '')
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [error, setError] = useState<string>('');
 
@@ -36,7 +38,7 @@ const SoccerTeamsTable = () => {
 
     // Syncs the the current selected team to local storage
     useEffect(() => {
-        localStorage.setItem('favoriteTeamId', favoriteTeamId || '');
+        localStorage.setItem(FAVORITE_TEAM_LOCAL_STORAGE_KEY, favoriteTeamId || '');
     }, [favoriteTeamId])
 
     return (

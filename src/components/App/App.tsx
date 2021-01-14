@@ -13,7 +13,7 @@ const createClasses = makeStyles((theme) => {
     }
 })
 
-const App = () => {
+const App: React.FC = () => {
     const classes = createClasses();
 
     return (
