@@ -17,7 +17,7 @@ const SoccerTeamsTable = () => {
     const theme = useTheme();
 
     const [soccerTeams, setSoccerTeams] = useState<Team[]>([])
-    const [favoriteTeamId, setFavoriteTeamId] = useState<Team['id']>(localStorage.getItem('favoriteTeamId'))
+    const [favoriteTeamId, setFavoriteTeamId] = useState<Team['id']>(localStorage.getItem('favoriteTeamId') || '')
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [error, setError] = useState<string>('');
 
@@ -36,7 +36,7 @@ const SoccerTeamsTable = () => {
 
     // Syncs the the current selected team to local storage
     useEffect(() => {
-        localStorage.setItem('favoriteTeamId', favoriteTeamId);
+        localStorage.setItem('favoriteTeamId', favoriteTeamId || '');
     }, [favoriteTeamId])
 
     return (
@@ -49,7 +49,13 @@ const SoccerTeamsTable = () => {
                 isLoading={isLoading}
                 data={soccerTeams}
                 onRowClick={((event, team) => {
-                    setFavoriteTeamId((prevFavoriteTeamId) => (prevFavoriteTeamId === team.id ? undefined : team.id))
+                    setFavoriteTeamId((prevFavoriteTeamId) => {
+                        if (prevFavoriteTeamId === team?.id) {
+                            return '';
+                        } else {
+                            return team?.id || '';
+                        }
+                    })
                 })}
                 columns={[
                     {
@@ -66,6 +72,7 @@ const SoccerTeamsTable = () => {
                         field: "founded"
                     }
                 ].map((column): Column<Team> => ({
+                    // Adding styles to all columns
                     ...column,
                     cellStyle: (teams, currentTeam) => ({
                         backgroundColor: currentTeam.id === favoriteTeamId ? lighten(theme.palette.secondary.main, 0.7) : 'initial',
