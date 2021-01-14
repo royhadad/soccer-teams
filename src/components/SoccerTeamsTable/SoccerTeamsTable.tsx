@@ -2,13 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import MaterialTable, {Column} from "material-table";
 import {lighten, makeStyles, Typography, useTheme} from "@material-ui/core";
-
-interface Team {
-    id: string;
-    name: string;
-    founded: number;
-    crestUrl: string;
-}
+import Team from '../../types/Team'
 
 const createClasses = makeStyles(() => {
     return {
@@ -24,15 +18,17 @@ const SoccerTeamsTable = () => {
 
     const [soccerTeams, setSoccerTeams] = useState<Team[]>([])
     const [favoriteTeamId, setFavoriteTeamId] = useState<Team['id']>(localStorage.getItem('favoriteTeamId'))
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [error, setError] = useState<string>('');
 
     // Fetch on mount
     useEffect(() => {
         setIsLoading(true);
         axios.get<Team[]>('/api/soccerTeams').then((response) => {
             setSoccerTeams(response.data)
-        }).catch((err) => {
-
+            setError('');
+        }).catch(() => {
+            setError('something went wrong, try again later');
         }).finally(() => {
             setIsLoading(false)
         })
@@ -45,12 +41,38 @@ const SoccerTeamsTable = () => {
 
     return (
         <div>
+            <Typography variant='subtitle1' color='error'>{error}</Typography>
             <MaterialTable<Team>
+                title={<Typography variant='h3' color='primary'>Soccer Teams</Typography>}
+                isLoading={isLoading}
+                data={soccerTeams}
                 onRowClick={((event, team) => {
                     setFavoriteTeamId((prevFavoriteTeamId) => (prevFavoriteTeamId === team.id ? undefined : team.id))
                 })}
-                isLoading={isLoading}
-                data={soccerTeams}
+                columns={[
+                    {
+                        title: "Crest",
+                        field: "crestUrl",
+                        render: (team) => (<img src={team.crestUrl} alt='team crest' className={classes.crest}/>)
+                    },
+                    {
+                        title: "Name",
+                        field: "name"
+                    },
+                    {
+                        title: "Year founded",
+                        field: "founded"
+                    }
+                ].map((column): Column<Team> => ({
+                    ...column,
+                    cellStyle: (teams, currentTeam) => ({
+                        backgroundColor: currentTeam.id === favoriteTeamId ? lighten(theme.palette.secondary.main, 0.7) : 'initial',
+                        textAlign: 'center'
+                    }),
+                    headerStyle: {
+                        textAlign: "center"
+                    }
+                }))}
                 options={{
                     sorting: false,
                     filtering: false,
@@ -63,28 +85,10 @@ const SoccerTeamsTable = () => {
                         fontWeight: "bold"
                     }
                 }}
-                title={<Typography variant='h3' color='primary'>Soccer Teams</Typography>}
                 style={{
                     backgroundColor: theme.palette.background.default,
                 }}
-                columns={[
-                    {
-                        title: "Crest",
-                        field: "crestUrl",
-                        render: (team) => (<img src={team.crestUrl} alt='team crest' className={classes.crest}/>)
-                    },
-                    {title: "Name", field: "name"},
-                    {title: "Year founded", field: "founded"}
-                ].map((column): Column<Team> => ({
-                    ...column,
-                    cellStyle: (teams, currentTeam) => ({
-                        backgroundColor: currentTeam.id === favoriteTeamId ? lighten(theme.palette.secondary.main, 0.7) : 'initial',
-                        textAlign: 'center'
-                    }),
-                    headerStyle: {
-                        textAlign: "center"
-                    }
-                }))}/>
+            />
         </div>
     )
 }
