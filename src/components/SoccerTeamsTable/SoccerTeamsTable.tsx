@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import MaterialTable, {Column} from "material-table";
-import {lighten, makeStyles, Typography, useTheme} from "@material-ui/core";
+import {Box, lighten, makeStyles, Typography, useTheme} from "@material-ui/core";
 import Team from '../../types/Team'
 
 const createClasses = makeStyles(() => {
@@ -41,7 +41,9 @@ const SoccerTeamsTable = () => {
 
     return (
         <div>
-            <Typography variant='subtitle1' color='error'>{error}</Typography>
+            <Box mb={1}>
+                <Typography variant='subtitle1' color='error'>{error}</Typography>
+            </Box>
             <MaterialTable<Team>
                 title={<Typography variant='h3' color='primary'>Soccer Teams</Typography>}
                 isLoading={isLoading}
