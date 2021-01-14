@@ -5,6 +5,7 @@ import {Box, lighten, makeStyles, Typography, useTheme} from "@material-ui/core"
 import Team from '../../types/Team'
 
 const FAVORITE_TEAM_LOCAL_STORAGE_KEY = 'favoriteTeamId'
+const TITLE_TEXT = 'Soccer Teams'
 
 const createClasses = makeStyles(() => {
     return {
@@ -30,7 +31,7 @@ const SoccerTeamsTable: React.FC = () => {
             setSoccerTeams(response.data)
             setError('');
         }).catch(() => {
-            setError('something went wrong, try again later');
+            setError('Something went wrong, please try again later');
         }).finally(() => {
             setIsLoading(false)
         })
@@ -47,7 +48,7 @@ const SoccerTeamsTable: React.FC = () => {
                 <Typography variant='subtitle1' color='error'>{error}</Typography>
             </Box>
             <MaterialTable<Team>
-                title={<Typography variant='h3' color='primary'>Soccer Teams</Typography>}
+                title={<Typography variant='h3' color='primary'>{TITLE_TEXT}</Typography>}
                 isLoading={isLoading}
                 data={soccerTeams}
                 onRowClick={((event, team) => {
@@ -105,3 +106,4 @@ const SoccerTeamsTable: React.FC = () => {
 }
 
 export default SoccerTeamsTable;
+export {TITLE_TEXT}
