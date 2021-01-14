@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 const favicon = require('express-favicon');
+const axios = require('axios');
 require('dotenv').config();
 
 const isDev = process.env.NODE_ENV !== 'production';
@@ -16,14 +17,19 @@ app.get('/ping', function (req, res) {
 });
 
 const SOCCER_DATA_API_KEY = process.env.SOCCER_DATA_API_KEY;
-
+const DEFAULT_FOOTBALL_TEAM_CREST_URL = 'https://www.designevo.com/res/templates/thumb_small/green-shield-and-football.png';
 app.get('/api/soccerTeams', (req, res) => {
-    console.log('api key:', SOCCER_DATA_API_KEY)
-    if (SOCCER_DATA_API_KEY) {
-        return res.send(['team 1', 'teams2', 'team3'])
-    } else {
-        return res.send('error!')
-    }
+    axios.get('http://api.football-data.org/v2/competitions/2000/teams', {headers: {'X-Auth-Token': SOCCER_DATA_API_KEY}}).then((soccerTeamsResponse) => {
+        const teams = (soccerTeamsResponse.data.teams || []).map((team) => ({
+            id: String(team.id),
+            name: team.name,
+            founded: team.founded,
+            crestUrl: team.crestUrl || DEFAULT_FOOTBALL_TEAM_CREST_URL
+        }));
+        return res.send(teams)
+    }).catch(() => {
+        res.status(500).send();
+    })
 })
 
 if (!isDev) {
