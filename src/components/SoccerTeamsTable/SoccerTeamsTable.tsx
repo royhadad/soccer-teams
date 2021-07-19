@@ -7,6 +7,10 @@ import Team from '../../types/Team'
 const FAVORITE_TEAM_LOCAL_STORAGE_KEY = 'favoriteTeamId'
 const TITLE_TEXT = 'Soccer Teams'
 
+function getFavoriteTeamFromLocalStorage(): Team['id'] {
+    return localStorage.getItem(FAVORITE_TEAM_LOCAL_STORAGE_KEY) || '';
+}
+
 const createClasses = makeStyles(() => {
     return {
         crest: {
@@ -19,9 +23,9 @@ const SoccerTeamsTable: React.FC = () => {
     const classes = createClasses();
     const theme = useTheme();
 
-    const [soccerTeams, setSoccerTeams] = useState<Team[]>([])
-    const [favoriteTeamId, setFavoriteTeamId] = useState<Team['id']>(localStorage.getItem(FAVORITE_TEAM_LOCAL_STORAGE_KEY) || '')
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [soccerTeams, setSoccerTeams] = useState<Team[]>([]);
+    const [favoriteTeamId, setFavoriteTeamId] = useState<Team['id']>(getFavoriteTeamFromLocalStorage);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
     // Fetch on mount
